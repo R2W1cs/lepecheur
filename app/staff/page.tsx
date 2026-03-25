@@ -45,13 +45,17 @@ export default async function StaffDashboard({
 
   // Fetch reservations from Redis with fallback to prevent 500
   let reservations: Reservation[] = [];
+  let dbStatus: 'connected' | 'error' | 'loading' = 'loading';
+  
   try {
     const rawReservations = await redis.lrange('reservations', 0, 50);
     reservations = rawReservations.map((r: any) => 
       typeof r === 'string' ? JSON.parse(r) : r
     );
+    dbStatus = 'connected';
   } catch (err) {
     console.error("Dashboard fetch error (Redis connection failed):", err);
+    dbStatus = 'error';
   }
 
   return (
@@ -60,14 +64,22 @@ export default async function StaffDashboard({
       
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto space-y-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <h1 className="text-5xl font-bold text-primary-dark">Tableau de Bord</h1>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <h1 className="text-5xl font-bold text-primary-dark">Tableau de Bord</h1>
+                <div className={`mt-2 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 border ${
+                  dbStatus === 'connected' 
+                    ? 'bg-green-500/10 text-green-600 border-green-500/20' 
+                    : 'bg-red-500/10 text-red-600 border-red-500/20'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${dbStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'} animate-pulse`} />
+                  {dbStatus === 'connected' ? 'Base de données connectée' : 'Erreur de connexion'}
+                </div>
+              </div>
               <p className="text-primary-dark/60 font-body text-lg">
                 Gestion des réservations en temps réel • {reservations.length} dernières entrées
               </p>
             </div>
-          </div>
 
           <div className="grid grid-cols-1 gap-6">
             {reservations.length === 0 ? (
