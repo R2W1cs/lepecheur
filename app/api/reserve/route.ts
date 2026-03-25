@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await resend.emails.send({
       from: 'Le Pêcheur <onboarding@resend.dev>',
-      to: [process.env.RESTAURANT_EMAIL || 'LepPecheur@gmail.com'],
+      to: [process.env.RESTAURANT_EMAIL || 'rayenoueslati153@gmail.com'],
       subject: `Nouvelle Réservation : ${name}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
