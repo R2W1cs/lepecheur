@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
+import { kv } from '@vercel/kv';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,17 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { name, phone, date, time, guests, note } = body;
+
+    // Save to Vercel KV for the Staff Dashboard
+    try {
+      await kv.lpush('reservations', JSON.stringify({
+        ...body,
+        id: Math.random().toString(36).substring(7),
+        createdAt: new Date().toISOString(),
+      }));
+    } catch (kvError) {
+      console.error("KV Error (Staff Dashboard failed but continuing email):", kvError);
+    }
 
     console.log("Attempting to send email for:", name);
 
