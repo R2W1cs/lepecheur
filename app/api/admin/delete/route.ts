@@ -1,7 +1,10 @@
-import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
+
+const FILE = path.join(process.cwd(), 'data', 'reservations.json');
 
 export async function DELETE(req: Request) {
   const body = await req.json();
@@ -16,25 +19,11 @@ export async function DELETE(req: Request) {
   }
 
   try {
-    const raw = await kv.lrange('reservations', 0, -1);
-    const all = (raw as string[]).map((r) => {
-      try { return typeof r === 'string' ? JSON.parse(r) : r; }
-      catch { return r; }
-    });
-
+    const all = JSON.parse(fs.readFileSync(FILE, 'utf-8'));
     const remaining = all.filter((r: any) => r.id !== id);
-
-    await kv.del('reservations');
-    if (remaining.length > 0) {
-      // rpush keeps newest-first order consistent with lpush on insert
-      for (const r of [...remaining].reverse()) {
-        await kv.lpush('reservations', JSON.stringify(r));
-      }
-    }
-
-    return NextResponse.json({ success: true, remaining: remaining.length });
+    fs.writeFileSync(FILE, JSON.stringify(remaining, null, 2));
+    return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error('Delete Error:', err);
-    return NextResponse.json({ error: 'Database error', message: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'File error', message: err.message }, { status: 500 });
   }
 }

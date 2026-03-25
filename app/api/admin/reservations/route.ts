@@ -1,7 +1,10 @@
-import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
+
+const FILE = path.join(process.cwd(), 'data', 'reservations.json');
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -12,21 +15,9 @@ export async function GET(req: Request) {
   }
 
   try {
-    const raw = await kv.lrange('reservations', 0, -1);
-    const reservations = (raw as string[]).map((r) => {
-      try { return typeof r === 'string' ? JSON.parse(r) : r; }
-      catch { return r; }
-    });
-    // Sort: newest first
-    reservations.sort((a: any, b: any) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    const reservations = JSON.parse(fs.readFileSync(FILE, 'utf-8'));
     return NextResponse.json({ reservations });
-  } catch (err: any) {
-    console.error('KV Error:', err);
-    return NextResponse.json(
-      { error: 'Database not reachable. Check KV env vars.', reservations: [] },
-      { status: 503 }
-    );
+  } catch {
+    return NextResponse.json({ reservations: [] });
   }
 }

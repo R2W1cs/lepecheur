@@ -302,13 +302,8 @@ export default function AdminPage() {
           <div className="mb-6 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 text-amber-800 text-sm">
             <AlertCircle size={18} className="shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold">Base de données non connectée</p>
+              <p className="font-bold">Erreur de chargement</p>
               <p className="opacity-70 mt-1">{dbError}</p>
-              <p className="mt-2 opacity-70">
-                Les réservations sont tout de même envoyées par email. Configurez les variables
-                <code className="bg-amber-100 px-1 rounded mx-1">KV_REST_API_URL</code> et
-                <code className="bg-amber-100 px-1 rounded">KV_REST_API_TOKEN</code> dans Vercel.
-              </p>
             </div>
           </div>
         )}
