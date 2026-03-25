@@ -43,11 +43,16 @@ export default async function StaffDashboard({
     );
   }
 
-  // Fetch reservations from KV
-  const rawReservations = await kv.lrange('reservations', 0, 50);
-  const reservations: Reservation[] = rawReservations.map((r: any) => 
-    typeof r === 'string' ? JSON.parse(r) : r
-  );
+  // Fetch reservations from KV with fallback to prevent 500
+  let reservations: Reservation[] = [];
+  try {
+    const rawReservations = await kv.lrange('reservations', 0, 50);
+    reservations = rawReservations.map((r: any) => 
+      typeof r === 'string' ? JSON.parse(r) : r
+    );
+  } catch (err) {
+    console.error("Dashboard fetch error (KV probably not connected):", err);
+  }
 
   return (
     <main className="bg-primary-light min-h-screen">
