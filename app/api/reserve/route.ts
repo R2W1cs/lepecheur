@@ -1,19 +1,19 @@
-import { Resend } from 'resend';
-import { NextResponse } from 'next/server';
-
-// Hardcoded key to ensure production works immediately as requested by user
-const RESEND_KEY = "re_4zULtcA8_LFiJJq4EGtBAfNh9UZtUFZyf";
-const resend = new Resend(process.env.RESEND_API_KEY || RESEND_KEY);
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  const RESEND_KEY = "re_4zULtcA8_LFiJJq4EGtBAfNh9UZtUFZyf";
+  const resend = new Resend(process.env.RESEND_API_KEY || RESEND_KEY);
+
   try {
     const body = await req.json();
     const { name, phone, date, time, guests, note } = body;
 
+    console.log("Attempting to send email for:", name);
+
     const { data, error } = await resend.emails.send({
-      from: 'Le Pêcheur <onboarding@resend.dev>',
-      to: [process.env.RESTAURANT_EMAIL || 'rayenoueslati153@gmail.com'],
-      subject: `Nouvelle Réservation : ${name}`,
+      from: 'onboarding@resend.dev',
+      to: ['rayenoueslati153@gmail.com'], // Hardcoded to match account email for guaranteed delivery on Free Tier
+      subject: `RESERVATION: ${name} (${date} ${time})`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
           <h2 style="color: #0A2A2A; border-bottom: 2px solid #D4AF7A; padding-bottom: 10px;">Nouvelle Réservation</h2>
