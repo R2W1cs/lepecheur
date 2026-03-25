@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import redis from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
-
-const FILE = path.join(process.cwd(), 'data', 'reservations.json');
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -15,9 +12,17 @@ export async function GET(req: Request) {
   }
 
   try {
-    const reservations = JSON.parse(fs.readFileSync(FILE, 'utf-8'));
+    const raw = await redis.lrange('reservations', 0, -1);
+    const reservations = raw.map((r) => {
+      try { return JSON.parse(r); }
+      catch { return r; }
+    });
+    reservations.sort((a: any, b: any) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     return NextResponse.json({ reservations });
-  } catch {
-    return NextResponse.json({ reservations: [] });
+  } catch (err: any) {
+    console.error('Redis Error:', err);
+    return NextResponse.json({ reservations: [], error: err.message }, { status: 503 });
   }
 }

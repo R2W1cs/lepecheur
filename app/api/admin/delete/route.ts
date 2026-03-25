@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import redis from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
-
-const FILE = path.join(process.cwd(), 'data', 'reservations.json');
 
 export async function DELETE(req: Request) {
   const body = await req.json();
@@ -19,11 +16,17 @@ export async function DELETE(req: Request) {
   }
 
   try {
-    const all = JSON.parse(fs.readFileSync(FILE, 'utf-8'));
+    const raw = await redis.lrange('reservations', 0, -1);
+    const all = raw.map((r) => { try { return JSON.parse(r); } catch { return r; } });
     const remaining = all.filter((r: any) => r.id !== id);
-    fs.writeFileSync(FILE, JSON.stringify(remaining, null, 2));
+
+    await redis.del('reservations');
+    for (const r of [...remaining].reverse()) {
+      await redis.lpush('reservations', JSON.stringify(r));
+    }
+
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    return NextResponse.json({ error: 'File error', message: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Redis error', message: err.message }, { status: 500 });
   }
 }
