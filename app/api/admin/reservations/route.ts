@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import redis from '@/lib/redis';
+import { kv } from '@vercel/kv';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,9 +12,9 @@ export async function GET(req: Request) {
   }
 
   try {
-    const raw = await redis.lrange('reservations', 0, -1);
+    const raw = await kv.lrange<string>('reservations', 0, -1);
     const reservations = raw.map((r) => {
-      try { return JSON.parse(r); }
+      try { return typeof r === 'string' ? JSON.parse(r) : r; }
       catch { return r; }
     });
     reservations.sort((a: any, b: any) =>
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     );
     return NextResponse.json({ reservations });
   } catch (err: any) {
-    console.error('Redis Error:', err);
+    console.error('KV Error:', err);
     return NextResponse.json({ reservations: [], error: err.message }, { status: 503 });
   }
 }
