@@ -5,13 +5,7 @@ import { kv } from '@vercel/kv';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: 'Email service not configured — add RESEND_API_KEY to .env.local' },
-      { status: 503 }
-    );
-  }
+  const apiKey = process.env.RESEND_API_KEY || "re_4zULtcA8_LFiJJq4EGtBAfNh9UZtUFZyf";
   const resend = new Resend(apiKey);
 
   try {
@@ -36,7 +30,7 @@ export async function POST(req: Request) {
 
     // Email notification to restaurant
     const { data, error } = await resend.emails.send({
-      from: 'reservations@resend.dev',
+      from: 'onboarding@resend.dev',
       to: [process.env.RESTAURANT_EMAIL || 'rayenoueslati153@gmail.com'],
       subject: `🎣 Nouvelle Réservation — ${name} (${date} à ${time})`,
       html: `
