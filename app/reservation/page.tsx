@@ -34,12 +34,19 @@ export default function ReservationPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Erreur lors de l'envoi");
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error === "API key is invalid") {
+          throw new Error("L'API Key Resend est invalide. Veuillez en générer une nouvelle 'Full Access' et la copier ENTIÈREMENT.");
+        }
+        throw new Error(data.error || "Erreur lors de l'envoi");
+      }
 
       addReservation(formData);
       setIsSubmitted(true);
-    } catch (err) {
-      setErrorMessage("Une erreur est survenue. Veuillez réessayer ou nous appeler directement.");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Une erreur est survenue. Veuillez réessayer ou nous appeler directement.");
     } finally {
       setIsSending(false);
     }

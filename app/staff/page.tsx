@@ -71,8 +71,20 @@ export default async function StaffDashboard({
 
           <div className="grid grid-cols-1 gap-6">
             {reservations.length === 0 ? (
-              <div className="bg-white p-20 rounded-3xl text-center border-2 border-dashed border-primary-dark/5">
-                <p className="text-xl text-primary-dark/40 italic">Aucune réservation pour le moment.</p>
+              <div className="bg-white p-20 rounded-3xl text-center border-2 border-dashed border-primary-dark/10 shadow-inner">
+                <div className="w-16 h-16 bg-primary-dark/5 rounded-full flex items-center justify-center mx-auto mb-6 text-primary-dark/20">
+                   <Calendar size={32} />
+                </div>
+                <p className="text-xl text-primary-dark/60 font-heading mb-4">Aucune réservation pour le moment.</p>
+                <div className="max-w-md mx-auto p-6 bg-accent-gold/5 rounded-2xl border border-accent-gold/20 text-sm text-primary-dark/80 space-y-3">
+                   <p className="font-bold">💡 Note pour l'administrateur :</p>
+                   <p>Si vous avez fait des tests et que cette liste reste vide, assurez-vous d'avoir connecté le **Vercel KV (Redis)** dans votre tableau de bord Vercel.</p>
+                   <div className="flex justify-center gap-2 pt-2">
+                      <span className="px-2 py-1 bg-white border border-primary-dark/10 rounded">Vercel</span>
+                      <span className="px-2 py-1 bg-white border border-primary-dark/10 rounded">Storage</span>
+                      <span className="px-2 py-1 bg-white border border-primary-dark/10 rounded">Connect</span>
+                   </div>
+                </div>
               </div>
             ) : (
               <div className="overflow-hidden bg-white rounded-3xl shadow-sm border border-primary-dark/5">
