@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 10, 42, 42;
+  --background-start-rgb: 247, 243, 232;
+  --background-end-rgb: 247, 243, 232;
+}
+
+/* =====================
+   GRAIN TEXTURE OVERLAY — luxury feel
+   ===================== */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  mix-blend-mode: multiply;
+}
+
+/* =====================
+   PREMIUM SCROLLBAR
+   ===================== */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F3E8;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #D4AF7A, #A08550);
+  border-radius: 999px;
+}
+
+@layer base {
+  body {
+    @apply bg-primary-light text-primary-dark font-body antialiased selection:bg-accent-gold selection:text-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-glass backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .wave-divider {
+    @apply relative w-full overflow-hidden leading-[0];
+  }
+
+  .btn-primary {
+    @apply px-8 py-4 bg-primary-dark text-primary-light rounded-full font-heading text-lg transition-all duration-300 hover:bg-accent-gold hover:scale-105 active:scale-95 shadow-lg;
+  }
+
+  .btn-outline {
+    @apply px-8 py-4 border-2 border-primary-dark text-primary-dark rounded-full font-heading text-lg transition-all hover:bg-primary-dark hover:text-primary-light hover:scale-105 active:scale-95;
+  }
+
+  /* Premium card */
+  .card-premium {
+    @apply rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:shadow-[0_40px_100px_rgba(10,42,42,0.10)] hover:-translate-y-1;
+  }
+
+  /* Section label */
+  .label-line {
+    @apply flex items-center gap-4;
+  }
+}
+
+/* =====================
+   MARQUEE ANIMATION
+   ===================== */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes marqueeReverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.animate-marquee {
+  animation: marquee 45s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.animate-marquee-reverse {
+  animation: marqueeReverse 45s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.animate-marquee:hover,
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* =====================
+   SHIMMER GOLD TEXT
+   ===================== */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #A08550 0%,
+    #D4AF7A 30%,
+    #F5D99D 50%,
+    #D4AF7A 70%,
+    #A08550 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* =====================
+   LENIS SMOOTH SCROLL
+   ===================== */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
