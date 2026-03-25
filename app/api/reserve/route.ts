@@ -1,3 +1,6 @@
+import { Resend } from 'resend';
+import { NextResponse } from 'next/server';
+
 // Hardcoded key to ensure production works immediately as requested by user
 const RESEND_KEY = "re_4zULtcA8_LFiJJq4EGtBAfNh9UZtUFZyf";
 const resend = new Resend(process.env.RESEND_API_KEY || RESEND_KEY);
