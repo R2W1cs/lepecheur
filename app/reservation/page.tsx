@@ -193,12 +193,22 @@ export default function ReservationPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-accent-gold/10 rounded-xl text-accent-gold h-fit">
-                    <MessageSquare size={20} />
+                  <div className="p-3 bg-green-500/10 rounded-xl text-green-600 h-fit">
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.886.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.89 4.44-9.892 9.886-.001 2.15.614 3.735 1.684 5.322l-1.055 3.855 3.963-1.041zm11.367-7.635c-.345-.174-2.048-1.011-2.359-1.124-.312-.113-.538-.173-.764.173-.225.346-.87 1.124-1.065 1.355-.197.231-.393.26-.738.087-.345-.173-1.455-.536-2.771-1.71-1.024-.913-1.716-2.041-1.917-2.387-.202-.346-.022-.533.151-.705.155-.155.345-.404.518-.605.171-.202.23-.346.345-.577.116-.231.058-.432-.029-.605-.087-.174-.764-1.844-1.046-2.526-.276-.669-.554-.58-.764-.591-.197-.01-.424-.012-.65-.012s-.596.085-.907.433c-.312.346-1.188 1.163-1.188 2.84s1.223 3.3 1.396 3.531c.173.231 2.407 3.674 5.83 5.152.814.351 1.45.561 1.944.718.818.259 1.563.222 2.152.134.657-.098 2.048-.838 2.337-1.648.289-.811.289-1.503.202-1.648-.086-.144-.316-.231-.661-.405z"/>
+                    </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold mb-1">Confirmation par téléphone</h4>
-                    <p className="text-sm opacity-70">Toute réservation doit être validée par notre équipe pour être effective.</p>
+                    <h4 className="font-bold mb-1">Service WhatsApp</h4>
+                    <p className="text-sm opacity-70 mb-3">Besoin d'une réponse immédiate ? Échangez directement avec nous.</p>
+                    <a 
+                      href="https://wa.me/21656115226" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-green-600 font-bold hover:underline"
+                    >
+                      Discuter sur WhatsApp
+                    </a>
                   </div>
                 </div>
 
