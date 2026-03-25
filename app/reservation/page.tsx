@@ -11,6 +11,8 @@ import { useReservationStore } from "@/store/useReservationStore";
 export default function ReservationPage() {
   const addReservation = useReservationStore((state) => state.addReservation);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -20,12 +22,27 @@ export default function ReservationPage() {
     note: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addReservation(formData);
-    setIsSubmitted(true);
-    // Reset after some time
-    setTimeout(() => setIsSubmitted(false), 5000);
+    setIsSending(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Erreur lors de l'envoi");
+
+      addReservation(formData);
+      setIsSubmitted(true);
+    } catch (err) {
+      setErrorMessage("Une erreur est survenue. Veuillez réessayer ou nous appeler directement.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -119,8 +136,25 @@ export default function ReservationPage() {
                     ></textarea>
                   </div>
 
-                  <button type="submit" className="btn-primary w-full py-5 text-xl">
-                    Confirmer la Réservation
+                  {errorMessage && (
+                    <p className="text-red-500 text-sm font-bold bg-red-50 p-4 rounded-xl border border-red-100">
+                      {errorMessage}
+                    </p>
+                  )}
+
+                  <button 
+                    type="submit" 
+                    disabled={isSending}
+                    className="btn-primary w-full py-5 text-xl relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed group"
+                  >
+                    <span className={isSending ? "opacity-0" : "opacity-100"}>
+                        Confirmer la Réservation
+                    </span>
+                    {isSending && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                      </div>
+                    )}
                   </button>
                 </form>
               ) : (
