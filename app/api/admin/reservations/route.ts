@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
+import { list } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
+
+const BLOB_KEY = 'reservations.json';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -12,17 +14,13 @@ export async function GET(req: Request) {
   }
 
   try {
-    const raw = await kv.lrange<string>('reservations', 0, -1);
-    const reservations = raw.map((r) => {
-      try { return typeof r === 'string' ? JSON.parse(r) : r; }
-      catch { return r; }
-    });
-    reservations.sort((a: any, b: any) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    const { blobs } = await list({ prefix: BLOB_KEY });
+    if (blobs.length === 0) return NextResponse.json({ reservations: [] });
+
+    const res = await fetch(blobs[0].url);
+    const reservations = await res.json();
     return NextResponse.json({ reservations });
   } catch (err: any) {
-    console.error('KV Error:', err);
     return NextResponse.json({ reservations: [], error: err.message }, { status: 503 });
   }
 }
