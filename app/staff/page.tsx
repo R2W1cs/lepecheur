@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import redis from '@/lib/redis';
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import { Users, Phone, Calendar, Clock, MessageSquare, Trash2, ShieldCheck } from "lucide-react";
@@ -43,15 +43,15 @@ export default async function StaffDashboard({
     );
   }
 
-  // Fetch reservations from KV with fallback to prevent 500
+  // Fetch reservations from Redis with fallback to prevent 500
   let reservations: Reservation[] = [];
   try {
-    const rawReservations = await kv.lrange('reservations', 0, 50);
+    const rawReservations = await redis.lrange('reservations', 0, 50);
     reservations = rawReservations.map((r: any) => 
       typeof r === 'string' ? JSON.parse(r) : r
     );
   } catch (err) {
-    console.error("Dashboard fetch error (KV probably not connected):", err);
+    console.error("Dashboard fetch error (Redis connection failed):", err);
   }
 
   return (

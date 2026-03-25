@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
+import redis from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,16 +16,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Persist in Vercel KV so the staff dashboard can list all reservations
+    // Persist in Redis so the staff dashboard can list all reservations
     try {
-      await kv.lpush('reservations', JSON.stringify({
+      await redis.lpush('reservations', JSON.stringify({
         ...body,
         id: Math.random().toString(36).substring(7),
         createdAt: new Date().toISOString(),
         status: 'pending',
       }));
-    } catch (kvError) {
-      console.warn('KV unavailable — reservation stored in email only:', kvError);
+    } catch (redisError) {
+      console.warn('Redis unavailable — reservation stored in email only:', redisError);
     }
 
     // Email notification to restaurant
